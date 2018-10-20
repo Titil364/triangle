@@ -1,2 +1,5 @@
 ./Cpp/test
 ./glucose/
+*.swp
+./Cpp/bin
+
