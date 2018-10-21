@@ -1,13 +1,22 @@
+#ifndef DOTMAKER_HPP
+#define DOTMAKER_HPP
+
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
 #include <vector>
 
+const bool DEBUG = false;
+
 const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
 const std::string IMG_EXTENSION = ".png";
 
-const std::string FILE_NAME = "test";
+const std::string FILE_NAME = "chvatal";
+
+const std::string GLUCOSE = "./glucose/simp/glucose";
+const std::string GLUCOSE_FOLDER = "glucose/simp/";
+const std::string GLUCOSE_RESULT = "_SAT";
 
 /**
 	\brief Export the file given as a .png (the file must be a .dot) 
@@ -19,7 +28,7 @@ void export_file_as_png(std::string in)
 	static const std::string command = "mkdir data";
 
 	// Test if the folder can be accessed
-	if(access("data",X_OK))
+	if(access(DATA_FOLDER.c_str(),X_OK) == 0)
 	{
 		system(command.c_str());
 		// sleeps 100ms to make sure the system has created the folder, else it may bug
@@ -41,6 +50,13 @@ void display_string_vector(std::vector< std::string> v){
 	std::cout << std::endl;
 }
 
+/**
+	\brief  
+	\param
+ */
+int reverse_var(int u){
+    return 0;
+}
 
 /**
 	\brief  
@@ -48,6 +64,7 @@ void display_string_vector(std::vector< std::string> v){
  */
 int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 
+	std::cout << std::endl << "Starting the construction of the graph" << std::endl;
 	std::string line;
 	std::string SAT_ANSWER_PATH = DATA_FOLDER + SAT_ANSWER;
 	std::ifstream SAT_FILE(SAT_ANSWER_PATH.c_str());
@@ -77,14 +94,17 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 			variables.push_back(token);
 			line.erase(0, i + delimiter.length());
 		}
-		std::cout << "Positive variables : " << std::endl;
-		display_string_vector(Tvariables);	
-		std::cout << "Negative variables : " << std::endl;
-		display_string_vector(Fvariables);	
-		std::cout << "All variables : " << std::endl;
-		display_string_vector(variables);	
-		//Il faut détecter qui est le voisin de qui
-		std::cout << line <<std::endl;
+
+		if(DEBUG){
+			std::cout << "Positive variables : " << std::endl;
+			display_string_vector(Tvariables);	
+			std::cout << "Negative variables : " << std::endl;
+			display_string_vector(Fvariables);	
+			std::cout << "All variables : " << std::endl;
+			display_string_vector(variables);	
+			//Il faut détecter qui est le voisin de qui
+			std::cout << line <<std::endl;
+		}
 		
 	}else{
 		std::cout << "ERROR : Cannot open the SAT_ANSWER file. ";
@@ -95,18 +115,31 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 	return 0;
 }
 
+/**
+	\brief Launch glucose with the "in" file (must be in DATA_FOLDER)
+	\param in Name of the file
+	\param extension The extension of the file (facultative)
+ */
+int glucose_launcher(std::string in, std::string extension)
+{	
 
-int main(int argc, char** argv){
-	std::string name;
-	if(argc > 1){
-		name = argv[1];
-	}else{
-		name = "test2";
+	static const std::string command = GLUCOSE + " "+ DATA_FOLDER + in + extension + " " + DATA_FOLDER + in + GLUCOSE_RESULT;
+
+	std::cout << "Lauching : " + command << std::endl;
+	// Test if the folder can be accessed
+	if(access(GLUCOSE_FOLDER.c_str(), X_OK) == 0)
+	{
+		system(command.c_str());
+		// sleeps 100ms to make sure the system has created the file
+		usleep(100000);
+		std::cout << "Lanching success. " << std::endl;
+		return 0;
 	}
-		construct_triangle_partition(name, "test");
-	return 0;
+		std::cout << "Lanching failed. " << std::endl;
+	//Erreur
+	return 1;
 }
 
 
 
-
+#endif

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "./graph/d_G33.c"
+#include "../graph/chvatal.c"
+#include "dotMaker.hpp"
 
 using namespace std;
 
@@ -41,15 +42,20 @@ string secondClauses(){
 }
 
 void saveToFile(string s){
-    ofstream file;
-    file.open("./sort/cnfSat00.txt");
-    if(file.is_open()){
+	cout << "Saving the clauses produced. " << endl;
+	string file_name = DATA_FOLDER + FILE_NAME + ".txt";
+    ofstream file(file_name);
+    if(file){
         file << s;
+    }else{
+	cout << "The saving failed. " << endl;	
     }
     file.close();
 }
 
-int main(){
+void createSAT(){
+	cout << "Starting the creation of the SAT clauses" << endl;
+
     string res = "c\n";
     res+="c starts with comments \n";
     res+="c\n";
@@ -62,5 +68,19 @@ int main(){
     res += secondClauses();
 
     saveToFile(res);
-    return 0;
+	cout << "End of the creation" << endl;
+}
+
+int main(int argc, char** argv){
+	/*
+	std::string name;
+	if(argc > 1){
+		name = argv[1];
+	}else{
+		name = "test2";
+	}*/
+	createSAT();
+	glucose_launcher(FILE_NAME, ".txt");
+	construct_triangle_partition(FILE_NAME + GLUCOSE_RESULT, "test");  	
+	return 0;
 }
