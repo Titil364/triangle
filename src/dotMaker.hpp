@@ -1,6 +1,8 @@
 #ifndef DOTMAKER_HPP
 #define DOTMAKER_HPP
 
+
+#include <sys/types.h>
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
@@ -12,9 +14,9 @@ const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
 const std::string IMG_EXTENSION = ".png";
 
-const std::string FILE_NAME = "chvatal";
+const std::string DEFAULT_FILE_NAME = "chvatal";
 
-const std::string GLUCOSE = "./glucose/simp/glucose";
+const std::string GLUCOSE = "glucose/simp/glucose";
 const std::string GLUCOSE_FOLDER = "glucose/simp/";
 const std::string GLUCOSE_RESULT = "_SAT";
 
@@ -24,19 +26,25 @@ const std::string GLUCOSE_RESULT = "_SAT";
  */
 void export_file_as_png(std::string in)
 {
-	std::string path = DATA_FOLDER + in + FILE_EXTENSION;
-	static const std::string command = "mkdir data";
-
-	// Test if the folder can be accessed
-	if(access(DATA_FOLDER.c_str(),X_OK) == 0)
-	{
-		system(command.c_str());
-		// sleeps 100ms to make sure the system has created the folder, else it may bug
-		usleep(100000);
+	//child
+	if(fork() == 0){
+		std::string path = DATA_FOLDER + in + FILE_EXTENSION;
+		static const std::string command = "mkdir data";
+	
+		// Test if the folder can be accessed
+		if(access(DATA_FOLDER.c_str(),X_OK) != 0)
+		{
+			system(command.c_str());
+			// sleeps 100ms to make sure the system has created the folder, else it may bug
+			usleep(100000);
+		}
+		std::string img_path = DATA_FOLDER + in  + IMG_EXTENSION;
+		std::string transform = "dot -Tpng \""+path+"\" > \""+img_path+"\"";
+		
+		execl("/usr/bin/dot", "dot", "-Tpng", path.c_str(), "-o", img_path.c_str());
+	}else{//parent
+		std::cout << "Creating the png in background by my child. " << std::endl;
 	}
-	std::string img_path = DATA_FOLDER + in  + IMG_EXTENSION;
-	std::string transform = "dot -Tpng \""+path+"\" > \""+img_path+"\"";
-	system(transform.c_str());
 }
 
 /**
@@ -116,6 +124,49 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 }
 
 /**
+	\brief Display the currect directory on the screen
+ */
+int write_graph(std::string fname){
+	std::cout << "Starting creating the .dot file. " <<std::endl;
+	if(graph == NULL){ 
+		std::cout << "The variable graph doesn't exist. " <<std::endl;
+		return 1;
+	}
+
+	std::ofstream oGraph(DATA_FOLDER + fname + FILE_EXTENSION);
+
+	if(oGraph){
+		std::string line;
+		line = "strict graph{ \n";
+		oGraph << line;
+		for(int i = 0; i < orderG(); i++){
+
+			for(int y = i+1; y < orderG(); y++){
+				if(graph[i][y] == 1){
+					line = std::to_string(i)+" -- "+ std::to_string(y) ;
+					if(false){
+						line += "[color=deeppink]";
+					}
+					line += "; \n";
+					oGraph << line;
+				}
+				line.clear();
+			}
+		}
+		line = "}";
+		oGraph << line;
+	}
+	oGraph.close();
+	return 0;
+}
+
+/**
+	\brief Display the currect directory on the screen
+ */
+void display_current_directory(){
+	std::cout << "Current directory " << get_current_dir_name() << std::endl << std::flush;
+}
+/**
 	\brief Launch glucose with the "in" file (must be in DATA_FOLDER)
 	\param in Name of the file
 	\param extension The extension of the file (facultative)
@@ -124,6 +175,7 @@ int glucose_launcher(std::string in, std::string extension)
 {	
 
 	static const std::string command = GLUCOSE + " "+ DATA_FOLDER + in + extension + " " + DATA_FOLDER + in + GLUCOSE_RESULT;
+
 
 	std::cout << "Lauching : " + command << std::endl;
 	// Test if the folder can be accessed

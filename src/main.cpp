@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+//#include "../graph/q_golomb.c"
+//#include "../graph/n_150_m_2351.c"
 #include "../graph/chvatal.c"
 #include "dotMaker.hpp"
 
@@ -41,9 +43,9 @@ string secondClauses(){
     return res;
 }
 
-void saveToFile(string s){
+void saveToFile(string fname, string s){
 	cout << "Saving the clauses produced. " << endl;
-	string file_name = DATA_FOLDER + FILE_NAME + ".txt";
+	string file_name = DATA_FOLDER + fname + ".txt";
     ofstream file(file_name);
     if(file){
         file << s;
@@ -53,7 +55,7 @@ void saveToFile(string s){
     file.close();
 }
 
-void createSAT(){
+void createSAT(string fname){
 	cout << "Starting the creation of the SAT clauses" << endl;
 
     string res = "c\n";
@@ -67,20 +69,22 @@ void createSAT(){
     res += firstClauses();
     res += secondClauses();
 
-    saveToFile(res);
+    saveToFile(fname, res);
 	cout << "End of the creation" << endl;
 }
 
 int main(int argc, char** argv){
-	/*
+	
 	std::string name;
 	if(argc > 1){
 		name = argv[1];
 	}else{
-		name = "test2";
-	}*/
-	createSAT();
-	glucose_launcher(FILE_NAME, ".txt");
-	construct_triangle_partition(FILE_NAME + GLUCOSE_RESULT, "test");  	
+		name = DEFAULT_FILE_NAME;
+	}
+	createSAT(name);
+	glucose_launcher(name, ".txt");
+	construct_triangle_partition(name + GLUCOSE_RESULT, "test");
+	write_graph(name);
+	export_file_as_png(name);
 	return 0;
 }

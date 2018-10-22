@@ -1,5 +1,3 @@
-#include "chvatal.c"
-
 int orderG(){
 return 90;}
 
