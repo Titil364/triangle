@@ -105,7 +105,3 @@ int are_adjacent(int u, int v){
   }
   return 0;
 }
-
-int main(){
-    return 0;
-}
