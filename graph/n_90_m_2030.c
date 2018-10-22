@@ -1,5 +1,3 @@
-#include "chvatal.c"
-
 int orderG(){
 return 90;}
 
@@ -106,8 +104,4 @@ int are_adjacent(int u, int v){
       return graph[u][v];
   }
   return 0;
-}
-
-int main(){
-    return 0;
 }

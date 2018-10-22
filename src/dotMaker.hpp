@@ -12,14 +12,20 @@ const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
 const std::string IMG_EXTENSION = ".png";
 
-const std::string FILE_NAME = "chvatal";
+const std::string FILE_NAME = "test";
 
 const std::string GLUCOSE = "./glucose/simp/glucose";
 const std::string GLUCOSE_FOLDER = "glucose/simp/";
 const std::string GLUCOSE_RESULT = "_SAT";
 
+struct variables{
+int u;
+int v;
+int parite;
+};
+
 /**
-	\brief Export the file given as a .png (the file must be a .dot) 
+	\brief Export the file given as a .png (the file must be a .dot)
 	\param in Name of the file to export
  */
 void export_file_as_png(std::string in)
@@ -51,18 +57,27 @@ void display_string_vector(std::vector< std::string> v){
 }
 
 /**
-	\brief  
-	\param
+	\brief Transform a variable n into a triplet u,v,n (n=[1-2])
+	\param n The variable returned by glucose, and var, a structure that represents
+	the equivalent of n, using u, v and the number 1 or 2
  */
-int reverse_var(int u){
-    return 0;
+variables reverse_var(int n, struct variables var){
+    if(n > orderG()*orderG()){
+        var.parite = 2;
+    } else {
+        var.parite = 1;
+    }
+    int tab = n-(var.parite-1)*orderG()*orderG();
+    var.v = tab/orderG();
+    var.u = tab-var.v*orderG();
+    return var;
 }
 
 /**
-	\brief  
+	\brief
 	\param SAT_ANSWER The name of the file used to know if the formula is satisfiable
  */
-int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
+int construct_triangle_partition(std::string SAT_ANSWER/*, std::string out*/){
 
 	std::cout << std::endl << "Starting the construction of the graph" << std::endl;
 	std::string line;
@@ -76,7 +91,7 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 			std::cout << "The formula is UNSAT. Please choose an other one. " << std::endl;
 			return 2;
 		}
-		
+
 		size_t i = 0;
 		std::vector< std::string> Tvariables;
 		std::vector< std::string> Fvariables;
@@ -97,20 +112,20 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 
 		if(DEBUG){
 			std::cout << "Positive variables : " << std::endl;
-			display_string_vector(Tvariables);	
+			display_string_vector(Tvariables);
 			std::cout << "Negative variables : " << std::endl;
-			display_string_vector(Fvariables);	
+			display_string_vector(Fvariables);
 			std::cout << "All variables : " << std::endl;
-			display_string_vector(variables);	
+			display_string_vector(variables);
 			//Il faut détecter qui est le voisin de qui
 			std::cout << line <<std::endl;
 		}
-		
+
 	}else{
 		std::cout << "ERROR : Cannot open the SAT_ANSWER file. ";
 		return 1;
 	}
-	
+
 	SAT_FILE.close();
 	return 0;
 }
@@ -121,7 +136,7 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::string out){
 	\param extension The extension of the file (facultative)
  */
 int glucose_launcher(std::string in, std::string extension)
-{	
+{
 
 	static const std::string command = GLUCOSE + " "+ DATA_FOLDER + in + extension + " " + DATA_FOLDER + in + GLUCOSE_RESULT;
 
