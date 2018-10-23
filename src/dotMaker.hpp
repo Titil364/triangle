@@ -36,7 +36,7 @@ void export_file_as_png(std::string in)
 	if(fork() == 0){
 		std::string path = DATA_FOLDER + in + FILE_EXTENSION;
 		static const std::string command = "mkdir data";
-	
+
 		// Test if the folder can be accessed
 		if(access(DATA_FOLDER.c_str(),X_OK) != 0)
 		{
@@ -46,7 +46,7 @@ void export_file_as_png(std::string in)
 		}
 		std::string img_path = DATA_FOLDER + in  + IMG_EXTENSION;
 		std::string transform = "dot -Tpng \""+path+"\" > \""+img_path+"\"";
-		
+
 		execl("/usr/bin/dot", "dot", "-Tpng", path.c_str(), "-o", img_path.c_str());
 	}else{//parent
 		std::cout << "Creating the png in background by my child. " << std::endl;
@@ -143,7 +143,7 @@ int construct_triangle_partition(std::string SAT_ANSWER/*, std::string out*/){
  */
 int write_graph(std::string fname){
 	std::cout << "Starting creating the .dot file. " <<std::endl;
-	if(graph == NULL){ 
+	if(graph == NULL){
 		std::cout << "The variable graph doesn't exist. " <<std::endl;
 		return 1;
 	}
