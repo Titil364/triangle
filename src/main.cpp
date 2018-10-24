@@ -42,10 +42,17 @@ string firstClauses(){
         }
         res += " 0\n";
         for(int v=0;v<orderG();v++){
-            if(v!=u && are_adjacent(u, v)){
-                res += "-" + to_string(replaceVar(u, v, 1)) + " -" + to_string(replaceVar(u, v, 2)) + " 0\n";
-                /*res += "-" + to_string(u) + "," +  to_string(v) + "," + to_string(1) + "   -"
-                + to_string(u) + "," +  to_string(v) + "," + to_string(2) + " 0\n";*/
+            if(v!=u){
+                if(are_adjacent(u, v)){
+                    res += "-" + to_string(replaceVar(u, v, 1)) + " -" + to_string(replaceVar(u, v, 2)) + " 0\n";
+                    /*res += "-" + to_string(u) + "," +  to_string(v) + "," + to_string(1) + "   -"
+                    + to_string(u) + "," +  to_string(v) + "," + to_string(2) + " 0\n";*/
+                } else {
+                    res += "-" + to_string(replaceVar(u, v, 1)) + " 0\n";
+                    res += "-" + to_string(replaceVar(u, v, 2)) + " 0\n";
+                    /*res += "-" + to_string(u) + "," +  to_string(v) + "," + to_string(1) + " 0\n";
+                    res += "-" + to_string(u) + "," +  to_string(v) + "," + to_string(2) + " 0\n";*/
+                }
             }
         }
     }
@@ -96,12 +103,18 @@ string thirdClauses(){
                     if(u != v && are_adjacent(u, v)){
                         for(int w=0;w<orderG();w++){
                             if(w != u && w != v
-                                && are_adjacent(w, u)
-                                && are_adjacent(w, v)){
-                                res += "-" + to_string(replaceVar(u, w, k))
-                                    + " -" + to_string(replaceVar(u, v, k)) + " 0\n";
-                                /*res += "-" + to_string(u) + "," +  to_string(w) + "," + to_string(k)
-                                    + "   -" + to_string(u) + "," +  to_string(v) + "," + to_string(k) + " 0\n";*/
+                                && are_adjacent(w, u)){
+                                if(are_adjacent(w, v)){
+                                    res += "-" + to_string(replaceVar(u, w, k))
+                                        + " -" + to_string(replaceVar(u, v, k)) + " 0\n";
+                                    /*res += "-" + to_string(u) + "," +  to_string(w) + "," + to_string(k)
+                                        + "   -" + to_string(u) + "," +  to_string(v) + "," + to_string(k) + " 0\n";*/
+                                } else {
+                                    res += "-" + to_string(replaceVar(u,v,1))
+                                        + " -" + to_string(replaceVar(u,w,2)) + " 0\n";
+                                    res += "-" + to_string(replaceVar(u,v,2))
+                                        + " -" + to_string(replaceVar(u,w,1)) + " 0\n";
+                                }
                             }
                         }
                     }
