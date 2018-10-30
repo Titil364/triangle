@@ -20,7 +20,7 @@ const std::string GLUCOSE = "glucose/simp/glucose";
 const std::string GLUCOSE_FOLDER = "glucose/simp/";
 const std::string GLUCOSE_RESULT = "_SAT";
 
-struct variables{
+struct xuv{ 
 int u;
 int v;
 int parite;
@@ -69,23 +69,33 @@ void display_string_vector(std::vector< std::string> v){
 	\param n The variable returned by glucose, and var, a structure that represents
 	the equivalent of n, using u, v and the number 1 or 2
  */
-variables reverse_var(int n, struct variables var){
+xuv* reverse_var(int n, struct xuv* var){
     if(n > orderG()*orderG()){
-        var.parite = 2;
+        var->parite = 2;
     } else {
-        var.parite = 1;
+        var->parite = 1;
     }
-    int tab = n-(var.parite-1)*orderG()*orderG();
-    var.v = tab/orderG();
-    var.u = tab-var.v*orderG();
+    int tab = n-(var->parite-1)*orderG()*orderG();
+    var->v = tab/orderG();
+    var->u = tab-var->v*orderG();
     return var;
+}
+
+void initialize_graph(int **g){
+		for(int i = 0; i < orderG(); i++){
+			for(int y = i+1; y < orderG(); y++){
+				if(are_adjacent(i, y)){
+					g[i][y] = 1;
+				}
+			}
+		}
 }
 
 /**
 	\brief
 	\param SAT_ANSWER The name of the file used to know if the formula is satisfiable
  */
-int construct_triangle_partition(std::string SAT_ANSWER/*, std::string out*/){
+int construct_triangle_partition(std::string SAT_ANSWER, std::vector<struct xuv*>& partition /*, std::string out*/){
 
 	std::cout << std::endl << "Starting the construction of the graph" << std::endl;
 	std::string line;
@@ -112,6 +122,13 @@ int construct_triangle_partition(std::string SAT_ANSWER/*, std::string out*/){
 			if(token.at(0) == '-'){
 				Fvariables.push_back(token.substr(1, token.length()));
 			}else{
+				int intToken = stoi(token);
+				struct xuv* var = new xuv;
+				reverse_var(intToken, var);
+				if(DEBUG){
+					std::cout << token << "(" << std::to_string(var->u) << ", " << std::to_string(var->v) << ")" << std::endl;
+				}
+				partition.push_back(var);
 				Tvariables.push_back(token);
 			}
 			variables.push_back(token);
@@ -141,26 +158,48 @@ int construct_triangle_partition(std::string SAT_ANSWER/*, std::string out*/){
 /**
 	\brief Display the currect directory on the screen
  */
-int write_graph(std::string fname){
-	std::cout << "Starting creating the .dot file. " <<std::endl;
-	if(graph == NULL){
-		std::cout << "The variable graph doesn't exist. " <<std::endl;
-		return 1;
+bool search_and_remove_xuv_from_vector(std::vector<struct xuv*>& vect, int u, int v){
+	for(std::vector<struct xuv*>::iterator it = vect.begin(); it != vect.end(); ++it){
+		if((*it)->u == u && (*it)->v == v){
+			vect.erase(it);
+			return true;
+		}
 	}
+	return false;
+}
+/**
+	\brief Display the currect directory on the screen
+ */
+int write_graph(std::string fname, std::vector<struct xuv*> partition){
+	std::cout << "Starting creating the .dot file. " <<std::endl;
+		
+	const int size = orderG();
+	int **g = new int*[size];
+	for(int i = 0; i < size; i++){
+		g[i] = new int[size];
+	}
+	initialize_graph(g);
 
 	std::ofstream oGraph(DATA_FOLDER + fname + FILE_EXTENSION);
+
+	std::vector<struct xuv*> copy;
+	for(std::vector<struct xuv*>::iterator it = partition.begin();
+		it != partition.end();
+			++it){
+		copy.push_back(*it);
+	}
 
 	if(oGraph){
 		std::string line;
 		line = "strict graph{ \n";
 		oGraph << line;
 		for(int i = 0; i < orderG(); i++){
-
 			for(int y = i+1; y < orderG(); y++){
-				if(graph[i][y] == 1){
+				if(g[i][y] == 1){
 					line = std::to_string(i)+" -- "+ std::to_string(y) ;
-					if(false){
-						line += "[color=deeppink]";
+					if(search_and_remove_xuv_from_vector(copy, i, y)){
+						search_and_remove_xuv_from_vector(copy, y, i);
+						line += "[color=deeppink, penwidth=2.0]";
 					}
 					line += "; \n";
 					oGraph << line;

@@ -4,7 +4,12 @@
 //#include "../graph/q_golomb.c"
 //#include "../graph/n_150_m_2351.c"
 //#include "../graph/chvatal.c"
-#include "../graph/SixVertex.c"
+//#include "../graph/SixVertex.c"
+//#include "../graph/n_15_m_24.c"
+//#include "../graph/n_15_m_64.c"
+//#include "../graph/n_15_m_32.c"
+//#include "../graph/d_C10.c"
+#include "../graph/p_sierp3.c"
 #include "dotMaker.hpp"
 
 using namespace std;
@@ -124,16 +129,18 @@ string thirdClauses(){
     return res;
 }
 
-void saveToFile(string fname, string s){
+int saveToFile(string fname, string s){
 	cout << "Saving the clauses produced. " << endl;
 	string file_name = DATA_FOLDER + fname + ".txt";
-    ofstream file(file_name);
+	ofstream file(file_name);
     if(file){
         file << s;
     }else{
 	cout << "The saving failed. " << endl;
+    	return 1;
     }
     file.close();
+	return 0;
 }
 
 void createSAT(string fname){
@@ -158,18 +165,18 @@ void createSAT(string fname){
 }
 
 bool testVarReplacement(){
-    struct variables var;
+    struct xuv var;
     var.u = orderG();
     var.v = 5;
     var.parite = 2;
-    struct variables var2;
+    struct xuv var2;
     var2.u = orderG();
     var2.v = 5;
     var2.parite = 2;
     int n = replaceVar(var.u, var.v, var.parite);
-    reverse_var(n, var2);
-    /*cout << var.u << " " << var.v << " " << var.parite << "\n";
-    cout << var2.u << " " << var2.v << " " << var2.parite << "\n";*/
+    reverse_var(n, &var2);
+    cout << var.u << " " << var.v << " " << var.parite << "\n";
+    cout << var2.u << " " << var2.v << " " << var2.parite << "\n";
     return (var.u == var2.u
                 && var.v == var2.v
                 && var.parite == var2.parite);
@@ -182,13 +189,15 @@ int main(int argc, char** argv){
 	}else{
 		name = DEFAULT_FILE_NAME;
 	}
+
 	createSAT(name);
 	glucose_launcher(name, ".txt");
-	construct_triangle_partition(name + GLUCOSE_RESULT/*, "test"*/);
-	write_graph(name);
+	std::vector<struct xuv*> partition;
+	construct_triangle_partition(name + GLUCOSE_RESULT, partition/*, "test"*/);
+	write_graph(name, partition);
 	export_file_as_png(name);
 
 	//Test
-    assert(testVarReplacement());
+//    assert(testVarReplacement());
 	return 0;
 }
