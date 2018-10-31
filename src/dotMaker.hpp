@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <vector>
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 
 const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
@@ -138,11 +138,10 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::vector<struct xuv*
 		if(DEBUG){
 			std::cout << "Positive variables : " << std::endl;
 			display_string_vector(Tvariables);
-			std::cout << "Negative variables : " << std::endl;
-			display_string_vector(Fvariables);
-			std::cout << "All variables : " << std::endl;
-			display_string_vector(variables);
-			//Il faut détecter qui est le voisin de qui
+//			std::cout << "Negative variables : " << std::endl;
+//			display_string_vector(Fvariables);
+//			std::cout << "All variables : " << std::endl;
+//			display_string_vector(variables);
 			std::cout << line <<std::endl;
 		}
 
@@ -161,6 +160,7 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::vector<struct xuv*
 bool search_and_remove_xuv_from_vector(std::vector<struct xuv*>& vect, int u, int v){
 	for(std::vector<struct xuv*>::iterator it = vect.begin(); it != vect.end(); ++it){
 		if((*it)->u == u && (*it)->v == v){
+			std::cout << "Removing : " << "(" << std::to_string((*it)->u) << ", " << std::to_string((*it)->v) << ")" << std::endl;
 			vect.erase(it);
 			return true;
 		}
@@ -187,6 +187,7 @@ int write_graph(std::string fname, std::vector<struct xuv*> partition){
 		it != partition.end();
 			++it){
 		copy.push_back(*it);
+		std::cout << "(" << std::to_string((*it)->u) << ", " << std::to_string((*it)->v) << ")" << std::endl;
 	}
 
 	if(oGraph){
@@ -194,11 +195,13 @@ int write_graph(std::string fname, std::vector<struct xuv*> partition){
 		line = "strict graph{ \n";
 		oGraph << line;
 		for(int i = 0; i < orderG(); i++){
+			oGraph << std::to_string(i) << "; \n";
 			for(int y = i+1; y < orderG(); y++){
 				if(g[i][y] == 1){
 					line = std::to_string(i)+" -- "+ std::to_string(y) ;
 					if(search_and_remove_xuv_from_vector(copy, i, y)){
-						search_and_remove_xuv_from_vector(copy, y, i);
+	//Suppression du retour
+	search_and_remove_xuv_from_vector(copy, y, i);
 						line += "[color=deeppink, penwidth=2.0]";
 					}
 					line += "; \n";

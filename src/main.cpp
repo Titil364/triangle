@@ -9,7 +9,12 @@
 //#include "../graph/n_15_m_64.c"
 //#include "../graph/n_15_m_32.c"
 //#include "../graph/d_C10.c"
-#include "../graph/p_sierp3.c"
+//#include "../graph/p_sierp3.c"
+//#include "../graph/G60.c"
+//#include "../graph/n_30_m_69.c"
+//#include "../graph/n_30_m_108.c"
+#include "../graph/K6.c"
+
 #include "dotMaker.hpp"
 
 using namespace std;
@@ -30,7 +35,7 @@ int replaceVar(int u, int v, int parite){
 	\param
  */
 string firstClauses(){
-    string res = "";
+    string res = "c Begin first Clauses \n";
     for(int u=0; u<orderG();u++){
         for(int v=0;v<orderG();v++){
             if(v!=u && are_adjacent(u, v)){
@@ -61,6 +66,7 @@ string firstClauses(){
             }
         }
     }
+	res += "c Fin First Clauses \n";
     return res;
 }
 
@@ -72,7 +78,7 @@ string firstClauses(){
 	\param
  */
 string secondClauses(){
-    string res = "";
+    string res = "c Begin second Clauses \n";
     for(int u=0; u<orderG();u++){
         for(int v=0;v<orderG();v++){
             if(v!=u && are_adjacent(u, v)){
@@ -91,6 +97,7 @@ string secondClauses(){
             }
         }
     }
+	res += "c Fin Second Clauses \n";
     return res;
 }
 
@@ -101,34 +108,56 @@ string secondClauses(){
 	\param
  */
 string thirdClauses(){
-    string res = "";
-        for(int k= 1; k<=2; k++){
-            for(int u=0; u<orderG();u++){
-                for(int v=0;v<orderG();v++){
-                    if(u != v && are_adjacent(u, v)){
-                        for(int w=0;w<orderG();w++){
-                            if(w != u && w != v
-                                && are_adjacent(w, u)){
-                                if(are_adjacent(w, v)){
+    string res = "c Begin third Clauses \n";
+    for(int u=0; u<orderG();u++){
+	for(int v=0;v<orderG();v++){
+	    if(u != v && are_adjacent(u, v)){
+		for(int w=0;w<orderG();w++){
+		    if(w != u && w != v
+			&& are_adjacent(w, u)){
+			if(are_adjacent(w, v)){
+				for(int k= 1; k<=2; k++){
                                     res += "-" + to_string(replaceVar(u, w, k))
                                         + " -" + to_string(replaceVar(u, v, k)) + " 0\n";
                                     /*res += "-" + to_string(u) + "," +  to_string(w) + "," + to_string(k)
                                         + "   -" + to_string(u) + "," +  to_string(v) + "," + to_string(k) + " 0\n";*/
-                                } else {
-                                    res += "-" + to_string(replaceVar(u,v,1))
-                                        + " -" + to_string(replaceVar(u,w,2)) + " 0\n";
-                                    res += "-" + to_string(replaceVar(u,v,2))
+				}
+				
+			} else {
+			    res += "-" + to_string(replaceVar(u,v,1))
+				+ " -" + to_string(replaceVar(u,w,2)) + " 0\n";
+			    res += "-" + to_string(replaceVar(u,v,2))
                                         + " -" + to_string(replaceVar(u,w,1)) + " 0\n";
-                                }
-                            }
-                        }
-                    }
-                }
+			}
+		    }
+	         }
             }
         }
+    }
+	res += "c End Third Clauses \n";
     return res;
 }
 
+
+string fourthClauses(){
+	string res = "c Begin Fourth Clauses \n";
+	for(int u=0; u<orderG();u++){
+		for(int v=0;v<orderG();v++){
+			if(u != v && are_adjacent(u, v)){
+				for(int w=0;w<orderG();w++){
+					if(w != u && w != v && are_adjacent(u, w)){
+						res += "-" + to_string(replaceVar(u, v, 1))
+						    + " -" + to_string(replaceVar(u, w, 2))
+						    + " " + to_string(replaceVar(v, w, 1))
+						    + " " + to_string(replaceVar(v, w, 2)) + " 0\n";
+					} 
+				}
+			}
+		}
+	}
+	res += "c End Fourth Clauses \n";
+	return res;
+}
 int saveToFile(string fname, string s){
 	cout << "Saving the clauses produced. " << endl;
 	string file_name = DATA_FOLDER + fname + ".txt";
@@ -159,6 +188,7 @@ void createSAT(string fname){
     res += firstClauses();
     res += secondClauses();
     res += thirdClauses();
+    res += fourthClauses();
 
     saveToFile(fname, res);
 	cout << "End of the creation" << endl;
