@@ -1,19 +1,32 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
-//#include "../graph/q_golomb.c"
-//#include "../graph/n_150_m_2351.c"
-//#include "../graph/chvatal.c"
-//#include "../graph/SixVertex.c"
-//#include "../graph/n_15_m_24.c"
-//#include "../graph/n_15_m_64.c"
-//#include "../graph/n_15_m_32.c"
-//#include "../graph/d_C10.c"
-//#include "../graph/p_sierp3.c"
-//#include "../graph/G60.c"
-//#include "../graph/n_30_m_69.c"
-//#include "../graph/n_30_m_108.c"
-#include "../graph/K6.c"
+//#include "../graph/q_golomb.c" //UNSAT
+//#include "../graph/chvatal.c" //UNSAT
+//#include "../graph/d_C10.c" //UNSAT
+//#include "../graph/p_sierp3.c" //SAT
+//#include "../graph/G60.c" //KILL
+//#include "../graph/d_G30.c" //UNSAT
+//#include "../graph/n_15_m_24.c" //SAT
+//#include "../graph/n_15_m_64.c" //SAT
+//#include "../graph/n_15_m_32.c" //SAT
+//#include "../graph/n_30_m_69.c" //SAT
+//#include "../graph/n_30_m_108.c" //SAT
+//#include "../graph/n_30_m_221.c" //SAT 
+//#include "../graph/n_45_m_124.c" //SAT
+//#include "../graph/n_45_m_234.c" //SAT
+//#include "../graph/n_45_m_524.c" //SAT
+//#include "../graph/n_90_m_479.c" //SAT
+#include "../graph/n_90_m_2030.c" //SAT
+//#include "../graph/n_150_m_2351.c" //SAT
+//#include "../graph/K6.c" //SAT
+//#include "../graph/K6-2.c" //SAT
+//#include "../graph/K4.c" //UNSAT
+//#include "../graph/K4-1.c" //UNSAT
+//#include "../graph/K4-2.c" //UNSAT
+//#include "../graph/K4-3.c" //UNSAT
+//#include "../graph/K5.c" //UNSAT
+//#include "../graph/K3.c" //SAT
 
 #include "dotMaker.hpp"
 
@@ -146,11 +159,40 @@ string fourthClauses(){
 			if(u != v && are_adjacent(u, v)){
 				for(int w=0;w<orderG();w++){
 					if(w != u && w != v && are_adjacent(u, w)){
-						
+					/*	
 						res += "-" + to_string(replaceVar(u, v, 1))
 						    + " -" + to_string(replaceVar(u, w, 2))
 						    + " " + to_string(replaceVar(v, w, 1))
-						    + " " + to_string(replaceVar(v, w, 2)) + " 0\n";
+						    + " " + to_string(replaceVar(v, w, 2)) + " 0\n";*/
+						if(are_adjacent(v, w)){
+							for(int z=0; z<orderG(); z++){
+								if(z!=u && z!=v && z!=w){
+									res +=  " -" + to_string(replaceVar(v, z, 2))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+
+									res +=  " -" + to_string(replaceVar(v, z, 1))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+
+									res +=  " -" + to_string(replaceVar(w, z, 2))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+
+									res +=  " -" + to_string(replaceVar(v, z, 1))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+
+									res +=  " -" + to_string(replaceVar(u, z, 2))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+
+									res +=  " -" + to_string(replaceVar(u, z, 1))
+									+	" -" + to_string(replaceVar(u, v, 1))
+									+	" -" + to_string(replaceVar(u, w, 2)) + " 0\n";
+								}
+							}
+						}
 						/*
 						res += "-" + to_string(replaceVar(v, w, 1))
 						    + " " + to_string(replaceVar(u, v, 1)) + " 0\n";
@@ -189,10 +231,11 @@ void createSAT(string fname){
     string res = "c\n";
     res+="c clauses corresponding to " + fname +"\n";
     res+="c\n";
-    int nbVar = 2*orderG()*(orderG()-1);
+    int nbVar = 2*orderG()*orderG();
     int nbClauses = 2 * orderG()
         + 3*orderG()*(orderG()-1)
-        + 2*orderG()*(orderG()-1)*(orderG()-2);
+        + 2*orderG()*(orderG()-1)*(orderG()-2)
+	+ orderG()%3*orderG();
     res += "p cnf " + to_string(nbVar)
         + ' ' + to_string(nbClauses) + "\n";
 

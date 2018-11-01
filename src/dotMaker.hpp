@@ -8,7 +8,8 @@
 #include <unistd.h>
 #include <vector>
 
-const bool DEBUG = true;
+const bool DEBUG = false;
+const bool BIG_GRAPH = true;
 
 const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
@@ -160,6 +161,7 @@ int construct_triangle_partition(std::string SAT_ANSWER, std::vector<struct xuv*
 bool search_and_remove_xuv_from_vector(std::vector<struct xuv*>& vect, int u, int v){
 	for(std::vector<struct xuv*>::iterator it = vect.begin(); it != vect.end(); ++it){
 		if((*it)->u == u && (*it)->v == v){
+			if(DEBUG)
 			std::cout << "Removing : " << "(" << std::to_string((*it)->u) << ", " << std::to_string((*it)->v) << ")" << std::endl;
 			vect.erase(it);
 			return true;
@@ -187,7 +189,6 @@ int write_graph(std::string fname, std::vector<struct xuv*> partition){
 		it != partition.end();
 			++it){
 		copy.push_back(*it);
-		std::cout << "(" << std::to_string((*it)->u) << ", " << std::to_string((*it)->v) << ")" << std::endl;
 	}
 
 	if(oGraph){
@@ -197,14 +198,22 @@ int write_graph(std::string fname, std::vector<struct xuv*> partition){
 		for(int i = 0; i < orderG(); i++){
 			oGraph << std::to_string(i) << "; \n";
 			for(int y = i+1; y < orderG(); y++){
+				line.clear();
 				if(g[i][y] == 1){
+					if(!BIG_GRAPH)
 					line = std::to_string(i)+" -- "+ std::to_string(y) ;
+					
 					if(search_and_remove_xuv_from_vector(copy, i, y)){
 	//Suppression du retour
 	search_and_remove_xuv_from_vector(copy, y, i);
+						if(BIG_GRAPH)
+						line = std::to_string(i)+" -- "+ std::to_string(y) ;
 						line += "[color=deeppink, penwidth=2.0]";
+						if(BIG_GRAPH)
+						line+="; \n";
 					}
-					line += "; \n";
+					if(!BIG_GRAPH)
+						line += "; \n";
 					oGraph << line;
 				}
 				line.clear();
