@@ -146,10 +146,21 @@ string fourthClauses(){
 			if(u != v && are_adjacent(u, v)){
 				for(int w=0;w<orderG();w++){
 					if(w != u && w != v && are_adjacent(u, w)){
+						
 						res += "-" + to_string(replaceVar(u, v, 1))
 						    + " -" + to_string(replaceVar(u, w, 2))
 						    + " " + to_string(replaceVar(v, w, 1))
 						    + " " + to_string(replaceVar(v, w, 2)) + " 0\n";
+						/*
+						res += "-" + to_string(replaceVar(v, w, 1))
+						    + " " + to_string(replaceVar(u, v, 1)) + " 0\n";
+						res += "-" + to_string(replaceVar(v, w, 1))
+						    + " " + to_string(replaceVar(u, w, 2)) + " 0\n";
+						res += "-" + to_string(replaceVar(v, w, 2))
+						    + " " + to_string(replaceVar(u, v, 1)) + " 0\n";
+						res += "-" + to_string(replaceVar(v, w, 2))
+						    + " " + to_string(replaceVar(u, w, 2)) + " 0\n";*/
+
 					} 
 				}
 			}
