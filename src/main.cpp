@@ -5,11 +5,18 @@
 //#include "../graph/chvatal.c" //UNSAT
 //#include "../graph/d_C10.c" //UNSAT
 //#include "../graph/p_sierp3.c" //SAT
+//#include "../graph/p_sierp33.c" //SAT
+//#include "../graph/sierp33.c" //SAT
+//#include "../graph/G33.c" //SAT
+//#include "../graph/G36.c" //SAT
+//#include "../graph/G40.c" //GLUCOSE TOO LONG
 //#include "../graph/G60.c" //KILL
 //#include "../graph/d_G30.c" //UNSAT
+//#include "../graph/p_petersen.c" //UNSAT
+//#include "../graph/p_moser.c" //UNSAT
 //#include "../graph/n_15_m_24.c" //SAT
-//#include "../graph/n_15_m_64.c" //SAT
 //#include "../graph/n_15_m_32.c" //SAT
+//#include "../graph/n_15_m_64.c" //SAT
 //#include "../graph/n_30_m_69.c" //SAT
 //#include "../graph/n_30_m_108.c" //SAT
 //#include "../graph/n_30_m_221.c" //SAT 
@@ -17,7 +24,7 @@
 //#include "../graph/n_45_m_234.c" //SAT
 //#include "../graph/n_45_m_524.c" //SAT
 //#include "../graph/n_90_m_479.c" //SAT
-#include "../graph/n_90_m_2030.c" //SAT
+//#include "../graph/n_90_m_2030.c" //SAT
 //#include "../graph/n_150_m_2351.c" //SAT
 //#include "../graph/K6.c" //SAT
 //#include "../graph/K6-2.c" //SAT
@@ -27,6 +34,19 @@
 //#include "../graph/K4-3.c" //UNSAT
 //#include "../graph/K5.c" //UNSAT
 //#include "../graph/K3.c" //SAT
+//#include "../graph/m_G70.c" //BAD ALLOC
+//#include "../graph/G55.c" //Glucose run 2 hours and can't find
+//#include "../graph/d_10K2.c" //UNSAT
+//#include "../graph/p_m5.c" //UNSAT
+//#include "../graph/p_m11.c" //UNSAT
+//#include "../graph/p_m23.c" //UNSAT
+//#include "../graph/p_m47.c" //UNSAT
+//#include "../graph/p_m95.c" //UNSAT
+#include "../graph/q_GXXIXXI.c" //UNSAT
+//#include "../graph/q_kneser62.c" //UNSAT
+//#include "../graph/q_kneser72.c" //UNSAT
+//#include "../graph/p_kneser83.c" //UNSAT
+
 
 #include "dotMaker.hpp"
 

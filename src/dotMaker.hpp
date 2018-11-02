@@ -9,7 +9,7 @@
 #include <vector>
 
 const bool DEBUG = false;
-const bool BIG_GRAPH = true;
+const bool BIG_GRAPH = false;
 
 const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
