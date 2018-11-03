@@ -9,13 +9,13 @@
 #include <vector>
 
 const bool DEBUG = false;
-const bool BIG_GRAPH = false;
+bool BIG_GRAPH = false;
 
 const std::string DATA_FOLDER = "data/";
 const std::string FILE_EXTENSION = ".dot";
 const std::string IMG_EXTENSION = ".png";
 
-const std::string DEFAULT_FILE_NAME = "chvatal";
+const std::string DEFAULT_FILE_NAME = "DEFAULT_NAME";
 
 const std::string GLUCOSE = "glucose/simp/glucose";
 const std::string GLUCOSE_FOLDER = "glucose/simp/";
